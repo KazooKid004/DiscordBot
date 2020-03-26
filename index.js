@@ -111,34 +111,19 @@ client.on("message", message => {
   }
 
   // Purge
-  if (msg.startsWith(prefix + "PURGE")) {
-    async function purge() {
-      message.delete();
-
-      if (!message.member.roles.find("name", "bot-commander")) {
-        message.channel.send(
-          "You need the `bot-commander` role to use this command."
-        );
-        return;
-      }
-      if (isNaN(args[0])) {
-        message.channel.send(
-          "Please use a number as your arguments. \n Usage: " +
-            prefix +
-            "purge <amount>"
-        );
-        return;
-      }
-
-      const fetched = await message.channel.fetchMessages({ limit: args[0] });
-      console.log(fetched.size + " messages found, deleting...");
-
-      message.channel
-        .bulkDelete(fetched)
-        .catch(error => message.channel.send(`Error: ${error}`));
+  client.on('message', function(message) {
+    console.log(message.content)
+    console.log(message.content.username)
+    if (message.content == "!clear") {
+        if (message.member.hasPermission("MANAGE_MESSAGES")) {
+          message.channel.messages.fetch()
+               .then(function(list){
+                    message.channel.bulkDelete(list);
+                }, function(err){message.channel.send("ERROR: ERROR CLEARING CHANNEL.")})
+        }
     }
-    purge();
-  }
+
+});
 });
 
 try {
