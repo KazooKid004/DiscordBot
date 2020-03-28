@@ -1,7 +1,12 @@
 var fs = require("fs");
-const Discord = require("discord.js");
-const client = new Discord.Client();
+const { Client, MessageEmbed } = require("discord.js");
+const Discord = require("discord.js")
+const client = new Discord.Client()
+const { token } = require("./config.json")
 var prefix = "!";
+
+client.login(token)
+
 //ping-pong
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -31,7 +36,7 @@ client.on("message", message => {
             reason: "They were bad!"
           })
           .then(() => {
-            message.reply("Successfully kicked ${user.tag}");
+            message.reply("Successfully kicked");
           })
           .catch(err => {
             message.reply("I was unable to kick the member");
@@ -63,9 +68,7 @@ client.on("message", message => {
             reason: "They were bad!"
           })
           .then(() => {
-            message.reply(
-              "Successfully smacked,  ${user.username} , with the ban hammer!"
-            );
+            message.reply("Successfully smacked them with the ban hammer!");
           })
           .catch(err => {
             message.reply("I was unable to Ban the member");
@@ -91,7 +94,7 @@ client.on("guildMemberAdd", member => {
   );
   if (!channel) return;
   channel.send(
-    `Me: The next person to join this server is ga- ${member} joined the server! Me: OK THE NEXT PERSON`
+    `Woah Welcome ${member}! Didn't expect you to join?!`
   );
 });
 
@@ -103,32 +106,87 @@ client.on("message", message => {
 
   // Commands
 
-  // Ping
-  if (msg === prefix + "9/11") {
+  // Joe
+  if (message.content == "!joe") {
     message.channel.send(
-      "On September 11, 2001, terrorists attacked the Unites States. They hijacked four airplanes in mid-flight. The terrorists flew two of the planes into two skyscrapers at the World Trade Center in New York City. The impact caused the buildings to catch fire and collapse. Another plane destroyed part of the Pentagon (the U.S. military headquarters) in Arlington, Virginia. The fourth plane crashed in Shanksville, Pennsylvania. Officials believe that the terrorists on that plane intended to destroy either the White House or the U.S. Capitol. Passengers on the plane fought the terrorists and prevented them from reaching their goal. In all, nearly 3,000 people were killed in the 9/11 attacks. \n Never Forgotten \n:cry: \n :pray:"
+      "JOE MAMA!"
+    );
+  }
+  // Covid-19
+
+  if (message.content == "!covid" || message.content == "!Covid") {
+    if (message.author.bot) return;
+    message.channel.send(
+      "The Symptoms of Covid-19 are: ```\ncough \nfever \ntiredness \ndifficulty breathing (severe cases) \nBluish Lips or face \nConfusion \nAnd persisitant chest pain``` \n If you have these, do the 5: ```\n 1.HANDS: Wash them often \n 2.ELBOW: Cough into it \n 3.FACE: Don't touch it \n 4.SPACE: Keep safe distance \n 5.HOME: Stay if you can```"
     );
   }
 
   // Purge
-  client.on('message', function(message) {
-    console.log(message.content)
-    console.log(message.content.username)
+  client.on("message", function (message) {
+    console.log(message.content);
+    console.log(message.content.username);
     if (message.content == "!clear") {
-        if (message.member.hasPermission("MANAGE_MESSAGES")) {
-          message.channel.messages.fetch()
-               .then(function(list){
-                    message.channel.bulkDelete(list);
-                }, function(err){message.channel.send("ERROR: ERROR CLEARING CHANNEL.")})
-        }
+      if (message.member.hasPermission("MANAGE_MESSAGES")) {
+        message.channel.messages.fetch().then(
+          function (list) {
+            message.channel.bulkDelete(list);
+          },
+          function (err) {
+            message.channel.send("ERROR: ERROR CLEARING CHANNEL.");
+          }
+        );
+      }
+    }
+  });
+});
+//reaction role
+client.on("message", message => {
+  if (message.author.bot) {
+    if (message.embeds) {
+      const embedMsg = message.embeds.find(msg => msg.title === "Server Roles");
+      if (embedMsg) {
+        message.react("692835395163127868")
+          .then(reaction => message.react("692835384035508254"))
+          .then(reaction => message.react("692835371297275985"))
+          .then(reaction => message.react("692835204540399646"))
+          .catch(err => console.log(error));
+      }
     }
 
-});
+    return;
+  }
+  if (message.content.toLowerCase() === "!roles") {
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle("Server Roles");
+    embed.setColor("RED");
+    embed.setDescription(
+      "<:Senior:692835395163127868> - Seniors \n<:Junior:692835384035508254> - Juniors \n<:Sophomore:692835371297275985> - Sophomores\n <:Freshman:692835204540399646> - Freshmen"
+    );
+    message.channel.send(embed);
+  }
 });
 
-try {
-  var token = fs.readFileSync("token.txt", "utf8").toString();
-  client.login(token);
-} catch (e) {
-  console.log("Error:", e.stack);
-}
+client.on('messageReactionAdd', (reaction, user) => {
+  if (user.bot)
+    return;
+
+  var roleName = reaction.emoji.name;
+  var role = reaction.message.guild.roles.cache.find(role => role.name.toLowerCase() === roleName.toLowerCase());
+  var member = reaction.message.guild.members.cache.find(member => member.id === user.id);
+  member.roles.add(role).then(member => {
+    console.log("added " + member.user.username + "to a role!");
+  }).catch(err => console.error)
+
+  client.on('messageReactionRemove', (reaction, user) => {
+    if (user.bot)
+      return;
+  
+    var roleName = reaction.emoji.name;
+    var role = reaction.message.guild.roles.cache.find(role => role.name.toLowerCase() === roleName.toLowerCase());
+    var member = reaction.message.guild.members.cache.find(member => member.id === user.id);
+    member.roles.remove(role).then(member => {
+      console.log("removed " + member.user.username + "'s role!");
+    }).catch(err => console.error)
+  
+  });
+});
