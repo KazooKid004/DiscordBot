@@ -2,7 +2,7 @@ var fs = require("fs");
 const { Client, MessageEmbed } = require("discord.js");
 const Discord = require("discord.js")
 const client = new Discord.Client()
-const { token } = require("./config.json")
+const { token } = require("./Token.json")
 var prefix = "!";
 
 client.login(token)
