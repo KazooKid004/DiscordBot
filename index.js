@@ -7,7 +7,7 @@ const Discord = require("discord.js")
 const client = new Discord.Client()
 const {
   token
-} = require("./Token.json")
+} = require("./secrets/Token.json")
 var prefix = "?";
 var version = "v-1.1.0";
 
