@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  nickkozulin-discordbot:
+    restart: unless-stopped
+    build: .
+    volumes:
+      - ~/OpenSource/DiscordBot/secrets:./secrets
