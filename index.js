@@ -10,7 +10,7 @@ const commando = require('discord.js-commando');
 
 const {
   token
-} = require("./Token.json")
+} = require("./secrets/Token.json")
 var prefix = "?";
 var version = "v-1.1.0";
 
@@ -167,18 +167,14 @@ client.on("message", message => {
 
 client.on('messageReactionAdd', async (reaction, user) => {
   if (reaction.partial) {
-		// If the message this reaction belongs to was removed the fetching might result in an API error, which we need to handle
 		try {
 			await reaction.fetch();
 		} catch (error) {
 			console.log('Something went wrong when fetching the message: ', error);
-			// Return as `reaction.message.author` may be undefined/null
 			return;
 		}
 	}
-	// Now the message has been cached and is fully available
 	console.log(`${reaction.message.author}'s message "${reaction.message.content}" gained a reaction!`);
-	// The reaction is now also fully available and the properties will be reflected accurately:
 	console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
 
   if (user.bot)
