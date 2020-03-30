@@ -1,10 +1,13 @@
+const Discord = require("discord.js")
 var fs = require("fs");
 const {
   Client,
   MessageEmbed
 } = require("discord.js");
-const Discord = require("discord.js")
-const client = new Discord.Client()
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
+const ms = require("ms");
+const commando = require('discord.js-commando');
+
 const {
   token
 } = require("./Token.json")
@@ -12,6 +15,7 @@ var prefix = "?";
 var version = "v-1.1.0";
 
 client.login(token)
+
 
 //Login
 client.on("ready", () => {
@@ -66,7 +70,6 @@ client.on("message", message => {
   }
 });
 //Mute
-
 //Banning
 client.on("message", message => {
   if (!message.guild) return;
@@ -134,6 +137,7 @@ client.on("message", function (message) {
   }
 });
 //reaction role
+new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.on("message", message => {
   if (!message.member.hasPermission("ADMINISTRATOR")) return;
   if (message.author.bot) {
@@ -161,7 +165,22 @@ client.on("message", message => {
   }
 });
 
-client.on('messageReactionAdd', (reaction, user) => {
+client.on('messageReactionAdd', async (reaction, user) => {
+  if (reaction.partial) {
+		// If the message this reaction belongs to was removed the fetching might result in an API error, which we need to handle
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.log('Something went wrong when fetching the message: ', error);
+			// Return as `reaction.message.author` may be undefined/null
+			return;
+		}
+	}
+	// Now the message has been cached and is fully available
+	console.log(`${reaction.message.author}'s message "${reaction.message.content}" gained a reaction!`);
+	// The reaction is now also fully available and the properties will be reflected accurately:
+	console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
+
   if (user.bot)
     return;
 
@@ -172,7 +191,7 @@ client.on('messageReactionAdd', (reaction, user) => {
     console.log("added " + member.user.username + "to a role!");
   }).catch(err => console.error)
 });
-client.on('messageReactionRemove', (reaction, user) => {
+client.on('messageReactionRemove', async (reaction, user) => {
   if (user.bot)
     return;
 
@@ -183,6 +202,7 @@ client.on('messageReactionRemove', (reaction, user) => {
     console.log("removed " + member.user.username + "'s role!");
   }).catch(err => console.error)
 });
+//status
 client.on("ready", () => {
   client.user.setPresence({
     activity: {
