@@ -1,32 +1,47 @@
 var fs = require("fs");
-const { Client, MessageEmbed } = require("discord.js");
+const {
+  Client,
+  MessageEmbed
+} = require("discord.js");
 const Discord = require("discord.js")
 const client = new Discord.Client()
-const { token } = require("./config.json")
-var prefix = "!";
+const {
+  token
+} = require("./Token.json")
+var prefix = "?";
+var version = "v-1.1.0";
 
 client.login(token)
 
-//ping-pong
+//Login
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
-
-client.on("message", msg => {
-  if (msg.content === "ping") {
-    msg.reply("Pong!");
+//Created by
+client.on("message", function (message) {
+  if (message.content == `${prefix}creator` || message.content == `${prefix}c`) {
+    if (message.author.bot) return;
+    message.channel.send('Created by: KazooKid#7454');
   }
 });
-
-//Kicking
-client.on("ready", () => {
-  console.log("Kicking Boot Ready!");
+//help
+client.on("message", message => {
+  if (!message.guild) return;
+  if (message.content.toLowerCase() === `${prefix}help`) {
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle("Bot Commands");
+    embed.setColor("RED");
+    embed.setDescription(
+      `1. ${prefix}clear - Clears Chat \n 2. ${prefix}kick <user> - Kicks them with a kicking boot\n 3. ${prefix}ban <user> - Smacks them with a ban hammer\n 4. ${prefix}covid - lists the symptoms and 5 steps on how to not spread it\n 5. ${prefix}roles - Role Reaction\n 6. ${prefix}creator or ${prefix}c - Tells you who made this bot\n 7. ${prefix}help - shows you this`
+    );
+    message.channel.send(embed);
+  }
 });
-
+//Kicking
 client.on("message", message => {
   if (!message.guild) return;
   if (!message.member.hasPermission("ADMINISTRATOR")) return;
-  if (message.content.startsWith("!kick")) {
+  if (message.content.startsWith(`${prefix}kick`)) {
     const user = message.mentions.users.first();
     if (user) {
       const member = message.guild.member(user);
@@ -50,15 +65,13 @@ client.on("message", message => {
     }
   }
 });
+//Mute
 
 //Banning
-client.on("ready", () => {
-  console.log("Ban Hammer Ready!");
-});
 client.on("message", message => {
   if (!message.guild) return;
   if (!message.member.hasPermission("ADMINISTRATOR")) return;
-  if (message.content.startsWith("!ban")) {
+  if (message.content.startsWith(`${prefix}ban`)) {
     const user = message.mentions.users.first();
     if (user) {
       const member = message.guild.member(user);
@@ -84,10 +97,6 @@ client.on("message", message => {
 });
 
 //greetings
-client.on("ready", () => {
-  console.log("Greeter Hired!");
-});
-
 client.on("guildMemberAdd", member => {
   const channel = member.guild.channels.cache.find(
     ch => ch.name === "member-log"
@@ -97,70 +106,56 @@ client.on("guildMemberAdd", member => {
     `Woah Welcome ${member}! Didn't expect you to join?!`
   );
 });
-
-client.on("message", message => {
-  let msg = message.content.toUpperCase();
-  let sender = message.author;
-  let cont = message.content.slice(prefix.length).split(" ");
-  let args = cont.slice(1);
-
-  // Commands
-
-  // Joe
-  if (message.content == "!joe") {
-    message.channel.send(
-      "JOE MAMA!"
-    );
-  }
-  // Covid-19
-
-  if (message.content == "!covid" || message.content == "!Covid") {
+// Covid-19
+client.on("message", function (message) {
+  if (!message.member.hasPermission("ADMINISTRATOR")) return;
+  if (message.content == `${prefix}covid` || message.content == `${prefix}Covid`) {
     if (message.author.bot) return;
     message.channel.send(
       "The Symptoms of Covid-19 are: ```\ncough \nfever \ntiredness \ndifficulty breathing (severe cases) \nBluish Lips or face \nConfusion \nAnd persisitant chest pain``` \n If you have these, do the 5: ```\n 1.HANDS: Wash them often \n 2.ELBOW: Cough into it \n 3.FACE: Don't touch it \n 4.SPACE: Keep safe distance \n 5.HOME: Stay if you can```"
     );
   }
-
-  // Purge
-  client.on("message", function (message) {
-    console.log(message.content);
-    console.log(message.content.username);
-    if (message.content == "!clear") {
-      if (message.member.hasPermission("MANAGE_MESSAGES")) {
-        message.channel.messages.fetch().then(
-          function (list) {
-            message.channel.bulkDelete(list);
-          },
-          function (err) {
-            message.channel.send("ERROR: ERROR CLEARING CHANNEL.");
-          }
-        );
-      }
+});
+// Purge
+client.on("message", function (message) {
+  console.log(message.content);
+  console.log(message.content.username);
+  if (message.content == `${prefix}clear`) {
+    if (message.member.hasPermission("MANAGE_MESSAGES")) {
+      message.channel.messages.fetch().then(
+        function (list) {
+          message.channel.bulkDelete(list);
+        },
+        function (err) {
+          message.channel.send("ERROR: ERROR CLEARING CHANNEL.");
+        }
+      );
     }
-  });
+  }
 });
 //reaction role
 client.on("message", message => {
+  if (!message.member.hasPermission("ADMINISTRATOR")) return;
   if (message.author.bot) {
     if (message.embeds) {
       const embedMsg = message.embeds.find(msg => msg.title === "Server Roles");
       if (embedMsg) {
-        message.react("692835395163127868")
-          .then(reaction => message.react("692835384035508254"))
-          .then(reaction => message.react("692835371297275985"))
-          .then(reaction => message.react("692835204540399646"))
+        message.react("693965541437735052")
+          .then(reaction => message.react("693965493777989714"))
+          .then(reaction => message.react("693965459032244295"))
+          .then(reaction => message.react("693965406964154417"))
           .catch(err => console.log(error));
       }
     }
 
     return;
   }
-  if (message.content.toLowerCase() === "!roles") {
+  if (message.content.toLowerCase() === `${prefix}roles`) {
     const embed = new Discord.MessageEmbed();
     embed.setTitle("Server Roles");
     embed.setColor("RED");
     embed.setDescription(
-      "<:Senior:692835395163127868> - Seniors \n<:Junior:692835384035508254> - Juniors \n<:Sophomore:692835371297275985> - Sophomores\n <:Freshman:692835204540399646> - Freshmen"
+      "<:Seniors:693965541437735052> - Seniors \n<:Juniors:693965493777989714> - Juniors \n<:Sophomores:693965459032244295> - Sophomores\n <:Freshmen:693965406964154417> - Freshmen"
     );
     message.channel.send(embed);
   }
@@ -176,17 +171,22 @@ client.on('messageReactionAdd', (reaction, user) => {
   member.roles.add(role).then(member => {
     console.log("added " + member.user.username + "to a role!");
   }).catch(err => console.error)
+});
+client.on('messageReactionRemove', (reaction, user) => {
+  if (user.bot)
+    return;
 
-  client.on('messageReactionRemove', (reaction, user) => {
-    if (user.bot)
-      return;
-  
-    var roleName = reaction.emoji.name;
-    var role = reaction.message.guild.roles.cache.find(role => role.name.toLowerCase() === roleName.toLowerCase());
-    var member = reaction.message.guild.members.cache.find(member => member.id === user.id);
-    member.roles.remove(role).then(member => {
-      console.log("removed " + member.user.username + "'s role!");
-    }).catch(err => console.error)
-  
+  var roleName = reaction.emoji.name;
+  var role = reaction.message.guild.roles.cache.find(role => role.name.toLowerCase() === roleName.toLowerCase());
+  var member = reaction.message.guild.members.cache.find(member => member.id === user.id);
+  member.roles.remove(role).then(member => {
+    console.log("removed " + member.user.username + "'s role!");
+  }).catch(err => console.error)
+});
+client.on("ready", () => {
+  client.user.setPresence({
+    activity: {
+      name: `Minecraft | ${prefix}help | Verison: ${version}`
+    }
   });
 });
