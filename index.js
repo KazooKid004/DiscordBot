@@ -10,12 +10,11 @@ const commando = require('discord.js-commando');
 
 const {
   token
-} = require("./secrets/Token.json")
+} = require("./Token.json")
 var prefix = "?";
 var version = "v-1.1.0";
 
 client.login(token)
-
 
 //Login
 client.on("ready", () => {
@@ -28,6 +27,19 @@ client.on("message", function (message) {
     message.channel.send('Created by: KazooKid#7454');
   }
 });
+//logan promote
+client.on("message", message => {
+  if (!message.guild) return;
+  if (message.content.toLowerCase() === `${prefix}lb`) {
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle("FoLlOw LoGaN BoIsVeRt");
+    embed.setColor("RED");
+    embed.setDescription(
+      `twitch.tv/loganboisvert`
+    );
+    message.channel.send(embed);
+  }
+});
 //help
 client.on("message", message => {
   if (!message.guild) return;
@@ -36,7 +48,20 @@ client.on("message", message => {
     embed.setTitle("Bot Commands");
     embed.setColor("RED");
     embed.setDescription(
-      `1. ${prefix}clear - Clears Chat \n 2. ${prefix}kick <user> - Kicks them with a kicking boot\n 3. ${prefix}ban <user> - Smacks them with a ban hammer\n 4. ${prefix}covid - lists the symptoms and 5 steps on how to not spread it\n 5. ${prefix}roles - Role Reaction\n 6. ${prefix}creator or ${prefix}c - Tells you who made this bot\n 7. ${prefix}help - shows you this`
+      `1. ${prefix}clear - Clears Chat \n 2. ${prefix}kick <user> - Kicks them with a kicking boot\n 3. ${prefix}ban <user> - Smacks them with a ban hammer\n 4. ${prefix}covid - lists the symptoms and 5 steps on how to not spread it\n 5. ${prefix}roles - Role Reaction\n 6. ${prefix}creator or ${prefix}c - Tells you who made this bot\n 7. ${prefix}changelog - Shows you some changes\n 8. ${prefix}help - shows you this`
+    );
+    message.channel.send(embed);
+  }
+});
+//change log
+client.on("message", message => {
+  if (!message.guild) return;
+  if (message.content.toLowerCase() === `${prefix}changelog`) {
+    const embed = new Discord.MessageEmbed();
+    embed.setTitle("Change Log");
+    embed.setColor("RED");
+    embed.setDescription(
+      `1. Fixed Reaction Role!\n2. Added Commands\n3. fixed some smaller bugs`
     );
     message.channel.send(embed);
   }
@@ -69,7 +94,7 @@ client.on("message", message => {
     }
   }
 });
-//Mute
+
 //Banning
 client.on("message", message => {
   if (!message.guild) return;
@@ -184,7 +209,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
   var role = reaction.message.guild.roles.cache.find(role => role.name.toLowerCase() === roleName.toLowerCase());
   var member = reaction.message.guild.members.cache.find(member => member.id === user.id);
   member.roles.add(role).then(member => {
-    console.log("added " + member.user.username + "to a role!");
+    console.log("added " + member.user.username + " to a role!");
   }).catch(err => console.error)
 });
 client.on('messageReactionRemove', async (reaction, user) => {
@@ -202,7 +227,7 @@ client.on('messageReactionRemove', async (reaction, user) => {
 client.on("ready", () => {
   client.user.setPresence({
     activity: {
-      name: `Minecraft | ${prefix}help | Verison: ${version}`
+      name: `FoRtNiTe | ${prefix}help | Verison: ${version}`
     }
   });
 });
